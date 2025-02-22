@@ -7,11 +7,26 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="53b22eb9-4c8c-426b-ae5a-cbe8add063cd" name="Changes" comment="" />
+    <list default="true" id="53b22eb9-4c8c-426b-ae5a-cbe8add063cd" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.CNC1MqttScript/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.CNC1MqttScript/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.CNC1MqttScript/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.CNC1MqttScript/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CNC1MqttScript/CNCAuthService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/CNCAuthService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CNC1MqttScript/CNCLiveDataPublisher.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/CNCLiveDataPublisher.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CNC1MqttScript/ConnectionEventArgs.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/ConnectionEventArgs.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CNC1MqttScript/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CNC1MqttScript/obj/CNC1MqttScript.csproj.nuget.g.props" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/obj/CNC1MqttScript.csproj.nuget.g.props" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CNC1MqttScript/obj/Debug/net8.0/CNC1MqttScript.AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/obj/Debug/net8.0/CNC1MqttScript.AssemblyInfo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CNC1MqttScript/obj/Debug/net8.0/CNC1MqttScript.AssemblyInfoInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/obj/Debug/net8.0/CNC1MqttScript.AssemblyInfoInputs.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CNC1MqttScript/obj/Debug/net8.0/CNC1MqttScript.csproj.FileListAbsolute.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/obj/Debug/net8.0/CNC1MqttScript.csproj.FileListAbsolute.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CNC1MqttScript/obj/rider.project.model.nuget.info" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/obj/rider.project.model.nuget.info" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/de3143c79a15dbf7b950f22d1482e0ce78521e216b392e257eb19221d5a890/MqttApplicationMessageReceivedEventArgs.cs" root0="FORCE_HIGHLIGHTING" />
@@ -24,18 +39,19 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;SolutionBuilderGeneralOptionsPage&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "main",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "SolutionBuilderGeneralOptionsPage",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RunManager">
     <configuration name="CNC1MqttScript" type="DotNetProject" factoryName=".NET Project">
       <option name="EXE_PATH" value="" />
@@ -65,7 +81,7 @@
       <option name="presentableId" value="Default" />
       <updated>1738114658568</updated>
       <workItem from="1740165464345" duration="1013000" />
-      <workItem from="1740166641401" duration="16674000" />
+      <workItem from="1740166641401" duration="20190000" />
     </task>
     <servers />
   </component>

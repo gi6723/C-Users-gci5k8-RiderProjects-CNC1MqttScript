@@ -1,48 +1,61 @@
 using System;
 using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Extensions.ManagedClient;
-using SocketIOClient;
 
-namespace CNC1MqttScript;
-
-public class ConnectionEventArgs
+namespace CNC1MqttScript
 {
-    private static void SetupEventHandlers(IMqttClient client)
+    public class ConnectionEventArgs
     {
-        client.ConnectedAsync += async e =>
-        {
-            Console.WriteLine("### CONNECTED ###");
-            // You can add logic to publish a message or subscribe to topics here.
-            await Task.CompletedTask;
-        };
+        private readonly ILogger<ConnectionEventArgs> _logger;
 
-        client.DisconnectedAsync += async e =>
+        public ConnectionEventArgs(ILogger<ConnectionEventArgs> logger)
         {
-            Console.WriteLine("### DISCONNECTED ###");
-            await Task.CompletedTask;
-        };
+            _logger = logger;
+        }
 
-        client.ApplicationMessageReceivedAsync += async e =>
+        public void SetupEventHandlers(IMqttClient client)
         {
-            try
+            client.ConnectedAsync += async e =>
             {
-                string topic = e.ApplicationMessage.Topic;
-                string payload = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
-                Console.WriteLine($"Received on '{topic}': {payload}");
+                _logger.LogInformation("✅ MQTT Connected.");
+                await Task.CompletedTask;
+            };
 
-                // Example: parse JSON if needed:
-                // var jsonDoc = JsonDocument.Parse(payload);
-            }
-            catch (Exception ex)
+            client.DisconnectedAsync += async e =>
             {
-                Console.WriteLine($"Error processing message: {ex.Message}");
-            }
+                _logger.LogError("⚠️ MQTT Disconnected.");
+                await Task.CompletedTask;
+            };
 
-            await Task.CompletedTask;
-        };
+            client.ApplicationMessageReceivedAsync += async e =>
+            {
+                try
+                {
+                    string topic = e.ApplicationMessage.Topic ?? "Unknown Topic";
+                    string payload = Encoding.UTF8.GetString(e.ApplicationMessage.PayloadSegment.ToArray());
+
+                    if (string.IsNullOrWhiteSpace(payload))
+                    {
+                        _logger.LogWarning($"⚠️ Empty message received on topic: {topic}");
+                        return;
+                    }
+
+                    _logger.LogDebug($"📩 Received on '{topic}': {payload}");
+
+                    // Example JSON parsing (if needed)
+                    // var jsonDoc = JsonDocument.Parse(payload);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError($"❌ Error processing MQTT message: {ex.Message}");
+                }
+
+                await Task.CompletedTask;
+            };
+        }
     }
 }

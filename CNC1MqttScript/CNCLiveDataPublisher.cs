@@ -14,9 +14,8 @@ namespace CNC1MqttScript
     {
         private readonly ILogger<CNCLiveDataPublisher> _logger;
         private readonly IManagedMqttClient _mqttClient;
-        private readonly SocketIOClient.SocketIO _socket; // CNCjs WebSocket Client
+        private readonly SocketIOClient.SocketIO _socket;
 
-        // Track current milling state
         private bool _millingActive = false;
         private LiveData _lastPublishedData = new LiveData();
 
@@ -32,13 +31,10 @@ namespace CNC1MqttScript
 
         public async Task StartAsync()
         {
-            // Listen to all CNCjs WebSocket events
             _socket.OnAny((string eventName, SocketIOResponse response) =>
             {
                 try
                 {
-                    _logger.LogDebug($"[DEBUG] Received event: {eventName} with payload: {response}");
-
                     switch (eventName)
                     {
                         case "command":
@@ -61,9 +57,6 @@ namespace CNC1MqttScript
                         case "serialport:error":
                             HandleErrorEvent(response);
                             break;
-                        default:
-                            _logger.LogDebug($"[DEBUG] Unhandled event: {eventName}");
-                            break;
                     }
                 }
                 catch (Exception ex)
@@ -80,17 +73,16 @@ namespace CNC1MqttScript
                 JsonElement jsonArray = response.GetValue<JsonElement>();
                 if (jsonArray.ValueKind == JsonValueKind.Array && jsonArray.GetArrayLength() > 2)
                 {
-                    string command = jsonArray[2].GetString();
-                    _logger.LogInformation($"Command event detected: {command}");
+                    string command = jsonArray[2].GetString() ?? string.Empty;
                     if (command == "gcode:start")
                     {
                         _millingActive = true;
-                        _logger.LogInformation("Milling started via command: gcode:start");
+                        _logger.LogInformation("Milling started via command.");
                     }
                     else if (command == "gcode:pause" || command == "gcode:stop")
                     {
                         _millingActive = false;
-                        _logger.LogInformation($"Milling paused/stopped via command: {command}");
+                        _logger.LogInformation($"Milling {command} received.");
                     }
                 }
             }
@@ -110,12 +102,11 @@ namespace CNC1MqttScript
                 if (root.TryGetProperty("sp", out JsonElement spElement))
                 {
                     _millingActive = (spElement.GetInt32() == 1);
-                    _logger.LogInformation($"Sender status: millingActive = {_millingActive}");
                 }
 
                 if (root.TryGetProperty("hold", out JsonElement holdElement) && holdElement.GetBoolean())
                 {
-                    _logger.LogInformation("Sender status: milling paused (hold = true).");
+                    _logger.LogInformation("Milling paused (hold active).");
                 }
 
                 PublishLiveData(root);
@@ -130,9 +121,13 @@ namespace CNC1MqttScript
         {
             try
             {
-                string state = response.GetValue<string>();
-                _logger.LogInformation($"Workflow state: {state}");
+                string state = response.GetValue<string>() ?? string.Empty;
                 _millingActive = (state == "running");
+
+                if (_millingActive)
+                    _logger.LogInformation("Workflow running.");
+                else
+                    _logger.LogInformation("Workflow stopped.");
 
                 PublishLiveData();
             }
@@ -147,7 +142,7 @@ namespace CNC1MqttScript
             try
             {
                 _millingActive = false;
-                _logger.LogInformation("Task finished: Milling job complete.");
+                _logger.LogInformation("Milling job completed.");
                 PublishLiveData();
             }
             catch (Exception ex)
@@ -182,7 +177,7 @@ namespace CNC1MqttScript
             }
         }
 
-        private async void PublishLiveData(JsonElement? root = null)
+        private async Task PublishLiveData(JsonElement? root = null)
         {
             try
             {
@@ -209,7 +204,6 @@ namespace CNC1MqttScript
                         liveData.RemainingTime = rTimeEl.GetInt64();
                 }
 
-                await PublishMetric("CurrentFederate", liveData.CurrentFederate);
                 await PublishMetric("SpindleSpeed", liveData.SpindleSpeed.ToString());
                 await PublishMetric("TotalGcodeCommands", liveData.TotalGcodeCommands.ToString());
                 await PublishMetric("SentGcodeCommands", liveData.SentGcodeCommands.ToString());
@@ -217,7 +211,6 @@ namespace CNC1MqttScript
                 await PublishMetric("ElapsedTime", liveData.ElapsedTime.ToString());
                 await PublishMetric("RemainingTime", liveData.RemainingTime.ToString());
 
-                _logger.LogInformation("Published all live data metrics to MQTT.");
                 _lastPublishedData = liveData;
             }
             catch (Exception ex)
@@ -230,11 +223,8 @@ namespace CNC1MqttScript
         {
             try
             {
-                if (string.IsNullOrEmpty(value))
-                {
-                    _logger.LogWarning($"Skipping empty payload for {metricName}");
+                if (string.IsNullOrWhiteSpace(value))
                     return;
-                }
 
                 var message = new MqttApplicationMessageBuilder()
                     .WithTopic($"CNCS/CNC1/Data/{metricName}")
@@ -253,7 +243,6 @@ namespace CNC1MqttScript
 
         private class LiveData
         {
-            public string CurrentFederate { get; set; } = "0";
             public int SpindleSpeed { get; set; }
             public int TotalGcodeCommands { get; set; }
             public int SentGcodeCommands { get; set; }
@@ -262,8 +251,9 @@ namespace CNC1MqttScript
             public long RemainingTime { get; set; }
 
             public LiveData() { }
-            public LiveData(LiveData other) => (CurrentFederate, SpindleSpeed, TotalGcodeCommands, SentGcodeCommands, ReceivedGcodeCommands, ElapsedTime, RemainingTime) = 
-                (other.CurrentFederate, other.SpindleSpeed, other.TotalGcodeCommands, other.SentGcodeCommands, other.ReceivedGcodeCommands, other.ElapsedTime, other.RemainingTime);
+            public LiveData(LiveData other) => 
+                (SpindleSpeed, TotalGcodeCommands, SentGcodeCommands, ReceivedGcodeCommands, ElapsedTime, RemainingTime) = 
+                (other.SpindleSpeed, other.TotalGcodeCommands, other.SentGcodeCommands, other.ReceivedGcodeCommands, other.ElapsedTime, other.RemainingTime);
         }
     }
 }

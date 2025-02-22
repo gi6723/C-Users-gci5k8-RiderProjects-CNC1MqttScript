@@ -15,12 +15,18 @@ namespace CNC1MqttScript
         private readonly IManagedMqttClient _mqttClient;
 
         // Values set from configuration or MQTT messages
-        public string Host { get; set; }
-        public string Username { get; set; }
-        public string Password { get; set; }
-        
-        // Store the current token in a field for reuse
-        public string Token { get; private set; }
+        public required string Host { get; set; }
+        public required string Username { get; set; }
+        public required string Password { get; set; }
+        public required string Token { get; set; }
+
+        public CNCAuthService(string host, string username, string password, string token)
+        {
+            Host = host;
+            Username = username;
+            Password = password;
+            Token = token;
+        }
 
         public CNCAuthService(ILogger<CNCAuthService> logger, IManagedMqttClient mqttClient)
         {
@@ -32,17 +38,16 @@ namespace CNC1MqttScript
         /// Contacts the CNCjs server to generate and retrieve a new authentication token.
         /// </summary>
         /// <returns>The new token if successful, null otherwise.</returns>
-        public async Task<string> GetAuthTokenAsync()
+        public async Task<string?> GetAuthTokenAsync()
         {
             if (string.IsNullOrEmpty(Host) || string.IsNullOrEmpty(Username) || string.IsNullOrEmpty(Password))
             {
-                _logger.LogError("[ERROR] Missing Host, Username, or Password for authentication.");
+                _logger.LogError("Missing Host, Username, or Password for authentication.");
                 return null;
             }
 
             using var client = new HttpClient();
             var signinUrl = $"{Host}/api/signin";
-            _logger.LogInformation($"[DEBUG] Sign-in URL: {signinUrl}");
 
             var credentials = new { name = Username, password = Password };
             var payload = JsonSerializer.Serialize(credentials);
@@ -50,26 +55,29 @@ namespace CNC1MqttScript
 
             try
             {
-                _logger.LogInformation("[DEBUG] Sending POST request to /api/signin...");
                 var response = await client.PostAsync(signinUrl, content);
-                _logger.LogInformation($"[DEBUG] Response Status: {response.StatusCode}");
 
-                response.EnsureSuccessStatusCode();
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogError($"Failed to authenticate: {response.StatusCode}");
+                    return null;
+                }
 
                 var responseBody = await response.Content.ReadAsStringAsync();
-                _logger.LogInformation($"[DEBUG] Response Body: {responseBody}");
-
                 var jsonDoc = JsonDocument.Parse(responseBody);
+
                 if (jsonDoc.RootElement.TryGetProperty("token", out var tokenElement))
                 {
-                    Token = tokenElement.GetString();
-                    _logger.LogInformation($"[DEBUG] Extracted token: {Token}");
+                    Token = tokenElement.GetString() ?? string.Empty;
+                    _logger.LogInformation("Successfully retrieved authentication token.");
                     return Token;
                 }
+
+                _logger.LogError("Token was not found in the response.");
             }
             catch (Exception ex)
             {
-                _logger.LogError($"[DEBUG] Exception while retrieving token: {ex.Message}");
+                _logger.LogError($"Exception while retrieving token: {ex.Message}");
             }
             return null;
         }
@@ -80,22 +88,27 @@ namespace CNC1MqttScript
         /// </summary>
         public async Task SubscribeToMqttTokenAsync()
         {
-            // Register a message handler for token updates
             _mqttClient.ApplicationMessageReceivedAsync += async e =>
             {
                 if (e.ApplicationMessage.Topic.Equals("CNCS/CNC1/Server/MqttToken", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    var receivedToken = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
-                    _logger.LogInformation($"[DEBUG] Received token from MQTT: {receivedToken}");
-                    // Update the current token
-                    Token = receivedToken;
+                    var receivedToken = Encoding.UTF8.GetString(e.ApplicationMessage.PayloadSegment.ToArray());
+                    
+                    if (!string.IsNullOrWhiteSpace(receivedToken))
+                    {
+                        Token = receivedToken;
+                        _logger.LogInformation("Updated authentication token via MQTT.");
+                    }
+                    else
+                    {
+                        _logger.LogWarning("Received an empty token from MQTT.");
+                    }
                 }
                 await Task.CompletedTask;
             };
 
-            // Subscribe to the token topic
             await _mqttClient.SubscribeAsync("CNCS/CNC1/Server/MqttToken");
-            _logger.LogInformation("[DEBUG] Subscribed to MQTT topic: CNCS/CNC1/Server/MqttToken");
+            _logger.LogInformation("Subscribed to MQTT token updates.");
         }
 
         /// <summary>
@@ -104,6 +117,12 @@ namespace CNC1MqttScript
         /// <param name="newToken">The new token to publish.</param>
         public async Task PublishTokenAsync(string newToken)
         {
+            if (string.IsNullOrWhiteSpace(newToken))
+            {
+                _logger.LogError("Attempted to publish an empty token.");
+                return;
+            }
+
             var message = new MqttApplicationMessageBuilder()
                 .WithTopic("CNCS/CNC1/Server/MqttToken")
                 .WithPayload(newToken)
@@ -112,8 +131,7 @@ namespace CNC1MqttScript
                 .Build();
 
             await _mqttClient.EnqueueAsync(message);
-            _logger.LogInformation($"[DEBUG] Published new token to MQTT: {newToken}");
-            // Update the stored token
+            _logger.LogInformation("Published new authentication token via MQTT.");
             Token = newToken;
         }
     }
