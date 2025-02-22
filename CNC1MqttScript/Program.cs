@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,7 +17,7 @@ namespace CNC1MqttScript
 {
     public class Program
     {
-        private static bool _authenticationCompleted = false; // ✅ Prevents duplicate authentication
+        private static bool _authenticationCompleted = false; // Prevent duplicate authentication
 
         public static async Task Main(string[] args)
         {
@@ -32,7 +33,7 @@ namespace CNC1MqttScript
                 .AddLogging(builder =>
                 {
                     builder.AddConsole();
-                    builder.SetMinimumLevel(LogLevel.Information); // ✅ Reduce log verbosity
+                    builder.SetMinimumLevel(LogLevel.Information); // Log only essential info
                 })
                 .AddSingleton<IConfiguration>(configuration)
                 .AddSingleton<CNCAuthService>()
@@ -47,15 +48,14 @@ namespace CNC1MqttScript
             programLogger.LogInformation("🚀 CNC1 MQTT Script starting...");
 
             // 4️⃣ Setup MQTT Client
-            string mqttHost = configuration["MQTT:Host"]?.Replace("mqtt://", "") ?? "152.70.157.193";
+            string mqttHost = configuration["MQTT:Host"] ?? "152.70.157.193";
             int mqttPort = int.TryParse(configuration["MQTT:Port"], out var port) ? port : 1883;
             string mqttUser = configuration["MQTT:Username"] ?? "Truman";
-            string mqttPass = configuration["MQTT:Password"] ?? "Gotigers";
+            string mqttPass = configuration["MQTT:Password"] ?? "GoTigers";
 
             var mqttClientOptions = new MqttClientOptionsBuilder()
                 .WithTcpServer(mqttHost, mqttPort)
                 .WithCredentials(mqttUser, mqttPass)
-                .WithCleanSession()
                 .Build();
 
             var managedOptions = new ManagedMqttClientOptionsBuilder()
@@ -66,31 +66,41 @@ namespace CNC1MqttScript
             await mqttClient.StartAsync(managedOptions);
             programLogger.LogInformation("✅ MQTT client connected.");
 
-            // 5️⃣ Initialize CNCAuthService
+            // 5️⃣ Initialize CNCAuthService with empty strings for required properties
             var cncAuthService = new CNCAuthService(cncAuthLogger, mqttClient)
             {
-                Host = null,
-                Username = null,
-                Password = null,
-                Token = null
+                Host = string.Empty,
+                Username = string.Empty,
+                Password = string.Empty,
+                Token = string.Empty,
+                ControllerType = string.Empty,
+                BuadRate = null,
+                Port = string.Empty,
             };
-
+            
             await cncAuthService.SubscribeToMqttTokenAsync(); // Subscribe to token topic
 
             // 6️⃣ Subscribe to CNC Server Credentials
             await mqttClient.SubscribeAsync("CNCS/CNC1/Server/Host");
             await mqttClient.SubscribeAsync("CNCS/CNC1/Server/Username");
             await mqttClient.SubscribeAsync("CNCS/CNC1/Server/Password");
+            await mqttClient.SubscribeAsync("CNCS/CNC1/Server/ControllerType");
+            await mqttClient.SubscribeAsync("CNCS/CNC1/Server/BuadRate");
+            await mqttClient.SubscribeAsync("CNCS/CNC1/Server/Port");
+
 
             programLogger.LogInformation("📡 Listening for CNC server credentials...");
 
             // 7️⃣ Handle Receiving CNC Credentials via MQTT
             mqttClient.ApplicationMessageReceivedAsync += async e =>
             {
-                if (_authenticationCompleted) return; // ✅ Avoid duplicate authentication
+                if (_authenticationCompleted) return;
 
                 string topic = e.ApplicationMessage.Topic;
                 string payload = Encoding.UTF8.GetString(e.ApplicationMessage.PayloadSegment.ToArray()).Trim();
+
+                programLogger.LogInformation(
+                    $"📩 Received message on topic '{topic}': {payload}"); // <-- Add this to log incoming messages
 
                 if (string.IsNullOrWhiteSpace(payload))
                 {
@@ -102,19 +112,37 @@ namespace CNC1MqttScript
                 {
                     case "CNCS/CNC1/Server/Host":
                         cncAuthService.Host = payload;
+                        programLogger.LogInformation($"✅ Set CNC Host: {cncAuthService.Host}");
                         break;
                     case "CNCS/CNC1/Server/Username":
                         cncAuthService.Username = payload;
+                        programLogger.LogInformation($"✅ Set CNC Username: {cncAuthService.Username}");
                         break;
                     case "CNCS/CNC1/Server/Password":
                         cncAuthService.Password = payload;
+                        programLogger.LogInformation($"✅ Set CNC Password: {cncAuthService.Password}");
+                        break;
+                    case "CNCS/CNC1/Server/ControllerType":
+                        cncAuthService.ControllerType = payload;
+                        programLogger.LogInformation($"✅ Set CNC ControllerType: {cncAuthService.ControllerType}");
+                        break;
+                    case "CNCS/CNC1/Server/BuadRate":
+                        cncAuthService.BuadRate = Convert.ToInt64(payload);
+                        programLogger.LogInformation($"✅ Set CNC BuadRate: {cncAuthService.BuadRate}");
+                        break;
+                    case "CNCS/CNC1/Server/Port":
+                        cncAuthService.Port = payload;
+                        programLogger.LogInformation($"✅ Set CNC Port: {cncAuthService.Port}");
                         break;
                 }
 
-                // Proceed when all credentials are received
                 if (!string.IsNullOrEmpty(cncAuthService.Host) &&
                     !string.IsNullOrEmpty(cncAuthService.Username) &&
-                    !string.IsNullOrEmpty(cncAuthService.Password))
+                    !string.IsNullOrEmpty(cncAuthService.Password) &&
+                    !string.IsNullOrEmpty(cncAuthService.ControllerType) &&
+                    (cncAuthService.BuadRate != null) &&
+                    !string.IsNullOrEmpty(cncAuthService.Port)
+                    )
                 {
                     _authenticationCompleted = true;
                     programLogger.LogInformation("🔑 CNC Credentials received. Authenticating...");
@@ -123,71 +151,47 @@ namespace CNC1MqttScript
                     if (!string.IsNullOrEmpty(token))
                     {
                         await cncAuthService.PublishTokenAsync(token);
+
                         programLogger.LogInformation("📨 CNC Token published.");
 
-                        // 8️⃣ Establish Socket.IO Connection
-                        var socket = new SocketIOClient.SocketIO(cncAuthService.Host, new SocketIOClient.SocketIOOptions
-                        {
-                            Path = "/socket.io/",
-                            EIO = EngineIO.V3,
-                            AutoUpgrade = false,
-                            Transport = TransportProtocol.WebSocket,
-                            ExtraHeaders = new Dictionary<string, string>
-                            {
-                                { "Authorization", $"Bearer {token}" }
-                            }
-                        });
-
-                        // 9️⃣ Handle Socket.IO Errors & Reconnection
-                        socket.OnError += async (sender, e) =>
-                        {
-                            string err = e ?? "Unknown Error";
-                            programLogger.LogError($"❌ [Socket.IO] Error: {err}");
-
-                            if (err.Contains("unauthorized", StringComparison.OrdinalIgnoreCase) ||
-                                err.Contains("401", StringComparison.OrdinalIgnoreCase))
-                            {
-                                programLogger.LogWarning("🔄 Re-authenticating Socket.IO...");
-                                var newToken = await cncAuthService.GetAuthTokenAsync();
-                                if (!string.IsNullOrEmpty(newToken))
-                                {
-                                    await cncAuthService.PublishTokenAsync(newToken);
-                                    socket.Options.ExtraHeaders["Authorization"] = $"Bearer {newToken}";
-
-                                    try
-                                    {
-                                        await socket.DisconnectAsync(); // Clean reconnect
-                                        await socket.ConnectAsync();
-                                        programLogger.LogInformation("🔗 Socket.IO reconnected.");
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        programLogger.LogError($"❌ [Socket.IO] Reconnect failed: {ex.Message}");
-                                    }
-                                }
-                            }
-                        };
-
-                        // 🔟 Connect Socket.IO
                         try
                         {
+                            var socket = new SocketIOClient.SocketIO(cncAuthService.Host,
+                                new SocketIOClient.SocketIOOptions
+                                {
+                                    Path = "/socket.io/",
+                                    EIO = EngineIO.V3,
+                                    AutoUpgrade = false,
+                                    Transport = TransportProtocol.WebSocket,
+                                    ExtraHeaders = new Dictionary<string, string>
+                                    {
+                                        { "Authorization", $"Bearer {token}" } // 🔐 Authenticated WebSocket connection
+                                    }
+                                });
+
                             await socket.ConnectAsync();
                             programLogger.LogInformation("✅ Socket.IO connected.");
+
+                            //Connecting to CNC Port
+                            await cncAuthService.OpenPort(socket);
+                            programLogger.LogInformation("✅ Connected to CNC Port.");
+
+                            //Initializing and Starting live data publisher
+                            var liveDataPublisher = new CNCLiveDataPublisher(cncLiveLogger, mqttClient, socket);
+                            liveDataPublisher.Start();
+
+                            programLogger.LogInformation("🏁 CNCLiveDataPublisher is now running.");
                         }
                         catch (Exception ex)
                         {
-                            programLogger.LogError($"❌ [Socket.IO] Connection failed: {ex.Message}");
+                            programLogger.LogError($"Error establishing socket connection: {ex.Message}");
                         }
-
-                        // 🔟 Start CNCLiveDataPublisher
-                        var liveDataPublisher = new CNCLiveDataPublisher(cncLiveLogger, mqttClient, socket);
-                        await liveDataPublisher.StartAsync();
-
-                        programLogger.LogInformation("🏁 Application running. Press Ctrl+C to exit.");
-                        await Task.Delay(-1); // Keep running
                     }
                 }
-            };
+
+
+            }; 
+            await Task.Delay(-1);
         }
     }
 }

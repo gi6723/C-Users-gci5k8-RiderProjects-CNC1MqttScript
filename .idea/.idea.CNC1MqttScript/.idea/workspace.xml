@@ -8,28 +8,41 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="53b22eb9-4c8c-426b-ae5a-cbe8add063cd" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.CNC1MqttScript/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.CNC1MqttScript/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.CNC1MqttScript/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.CNC1MqttScript/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CNC1MqttScript/CNCAuthService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/CNCAuthService.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CNC1MqttScript/CNCLiveDataPublisher.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/CNCLiveDataPublisher.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CNC1MqttScript/ConnectionEventArgs.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/ConnectionEventArgs.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CNC1MqttScript/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CNC1MqttScript/bin/Debug/net8.0/CNC1MqttScript.dll" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/bin/Debug/net8.0/CNC1MqttScript.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CNC1MqttScript/bin/Debug/net8.0/CNC1MqttScript.exe" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/bin/Debug/net8.0/CNC1MqttScript.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CNC1MqttScript/bin/Debug/net8.0/CNC1MqttScript.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/bin/Debug/net8.0/CNC1MqttScript.pdb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CNC1MqttScript/obj/CNC1MqttScript.csproj.nuget.g.props" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/obj/CNC1MqttScript.csproj.nuget.g.props" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CNC1MqttScript/obj/Debug/net8.0/CNC1MqttScript.AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/obj/Debug/net8.0/CNC1MqttScript.AssemblyInfo.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CNC1MqttScript/obj/Debug/net8.0/CNC1MqttScript.AssemblyInfoInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/obj/Debug/net8.0/CNC1MqttScript.AssemblyInfoInputs.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CNC1MqttScript/obj/Debug/net8.0/CNC1MqttScript.csproj.FileListAbsolute.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/obj/Debug/net8.0/CNC1MqttScript.csproj.FileListAbsolute.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CNC1MqttScript/obj/Debug/net8.0/CNC1MqttScript.csproj.CoreCompileInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/obj/Debug/net8.0/CNC1MqttScript.csproj.CoreCompileInputs.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CNC1MqttScript/obj/Debug/net8.0/CNC1MqttScript.dll" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/obj/Debug/net8.0/CNC1MqttScript.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CNC1MqttScript/obj/Debug/net8.0/CNC1MqttScript.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/obj/Debug/net8.0/CNC1MqttScript.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CNC1MqttScript/obj/Debug/net8.0/CNC1MqttScript.sourcelink.json" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/obj/Debug/net8.0/CNC1MqttScript.sourcelink.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CNC1MqttScript/obj/Debug/net8.0/apphost.exe" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/obj/Debug/net8.0/apphost.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CNC1MqttScript/obj/Debug/net8.0/ref/CNC1MqttScript.dll" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/obj/Debug/net8.0/ref/CNC1MqttScript.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CNC1MqttScript/obj/Debug/net8.0/refint/CNC1MqttScript.dll" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/obj/Debug/net8.0/refint/CNC1MqttScript.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CNC1MqttScript/obj/rider.project.model.nuget.info" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/obj/rider.project.model.nuget.info" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CNC1MqttScript/obj/rider.project.restore.info" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/obj/rider.project.restore.info" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="DpaMonitoringSettings">
+    <option name="firstShow" value="false" />
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/de3143c79a15dbf7b950f22d1482e0ce78521e216b392e257eb19221d5a890/MqttApplicationMessageReceivedEventArgs.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/51cdcd7f7b464cbc98633f398229b9a814800/78/9c3f0003/SocketIO.cs" root0="FORCE_HIGHLIGHTING" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 0
@@ -41,8 +54,10 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    ".NET Project.CNC1MqttScript.executor": "Debug",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "main",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "<unknown>",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -81,7 +96,11 @@
       <option name="presentableId" value="Default" />
       <updated>1738114658568</updated>
       <workItem from="1740165464345" duration="1013000" />
-      <workItem from="1740166641401" duration="20190000" />
+      <workItem from="1740166641401" duration="20464000" />
+      <workItem from="1740187909112" duration="730000" />
+      <workItem from="1740189612514" duration="1734000" />
+      <workItem from="1740191715506" duration="506000" />
+      <workItem from="1740192255754" duration="40557000" />
     </task>
     <servers />
   </component>

@@ -19,21 +19,30 @@ namespace CNC1MqttScript
         public required string Username { get; set; }
         public required string Password { get; set; }
         public required string Token { get; set; }
+        
+        public required string ControllerType { get; set; }
 
-        public CNCAuthService(string host, string username, string password, string token)
+        public required long? BuadRate { get; set; } = null;
+        
+        public required string Port { get; set; }
+
+        public CNCAuthService(string host, string username, string password, string token, int buadrate, string port, string controllertype)
         {
             Host = host;
             Username = username;
             Password = password;
             Token = token;
+            ControllerType = controllertype;
+            BuadRate = buadrate;
+            Port = port;
+            
         }
 
-        public CNCAuthService(ILogger<CNCAuthService> logger, IManagedMqttClient mqttClient)
+        public CNCAuthService( ILogger<CNCAuthService> logger, IManagedMqttClient mqttClient)
         {
             _logger = logger;
             _mqttClient = mqttClient;
         }
-
         /// <summary>
         /// Contacts the CNCjs server to generate and retrieve a new authentication token.
         /// </summary>
@@ -133,6 +142,56 @@ namespace CNC1MqttScript
             await _mqttClient.EnqueueAsync(message);
             _logger.LogInformation("Published new authentication token via MQTT.");
             Token = newToken;
+        }
+
+        public async Task OpenPort(SocketIOClient.SocketIO client)
+        {
+            var programLogger = _logger;
+            await client.EmitAsync("list");
+            
+            client.On("serialport:list", async response =>
+            {
+                try
+                {
+                    var ports = response.GetValue<JsonElement>();
+                    bool portFound = false;
+
+                    foreach (var port in ports.EnumerateArray())
+                    {
+                        var portName = port.GetProperty("port").GetString();
+
+                        if (portName == Port)
+                        {
+                            portFound = true;
+                            bool inUse = port.TryGetProperty("inuse", out JsonElement inuseElement) &&
+                                         inuseElement.GetBoolean();
+                            
+                            await client.EmitAsync("open", new object[]
+                            {
+                                Port,
+                                new
+                                {
+                                    controllerType = ControllerType,
+                                    baudrate = BuadRate,
+                                    rtscts = false,
+                                    pin = new { dtr = (object)null, rts = (object)null }
+                                }
+                            });
+                            break;
+                        }
+                    }
+
+                    if (!portFound)
+                    {
+                       programLogger.LogError($"[ERROR] Port {Port} not found in the port list!");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    programLogger.LogInformation($"[DEBUG] Exception in serialport:list handler: {ex.Message}");
+                }
+            });
+
         }
     }
 }

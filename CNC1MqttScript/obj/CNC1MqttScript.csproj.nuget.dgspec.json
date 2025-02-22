@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\gci5k8\\RiderProjects\\CNC1MQttScript\\CNC1MqttScript\\CNC1MqttScript.csproj": {}
+    "C:\\Users\\gci5k8\\RiderProjects\\CNC1MqttScript\\CNC1MqttScript\\CNC1MqttScript.csproj": {}
   },
   "projects": {
-    "C:\\Users\\gci5k8\\RiderProjects\\CNC1MQttScript\\CNC1MqttScript\\CNC1MqttScript.csproj": {
+    "C:\\Users\\gci5k8\\RiderProjects\\CNC1MqttScript\\CNC1MqttScript\\CNC1MqttScript.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\gci5k8\\RiderProjects\\CNC1MQttScript\\CNC1MqttScript\\CNC1MqttScript.csproj",
+        "projectUniqueName": "C:\\Users\\gci5k8\\RiderProjects\\CNC1MqttScript\\CNC1MqttScript\\CNC1MqttScript.csproj",
         "projectName": "CNC1MqttScript",
-        "projectPath": "C:\\Users\\gci5k8\\RiderProjects\\CNC1MQttScript\\CNC1MqttScript\\CNC1MqttScript.csproj",
+        "projectPath": "C:\\Users\\gci5k8\\RiderProjects\\CNC1MqttScript\\CNC1MqttScript\\CNC1MqttScript.csproj",
         "packagesPath": "C:\\Users\\gci5k8\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\gci5k8\\RiderProjects\\CNC1MQttScript\\CNC1MqttScript\\obj\\",
+        "outputPath": "C:\\Users\\gci5k8\\RiderProjects\\CNC1MqttScript\\CNC1MqttScript\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -89,6 +89,18 @@
               "target": "Package",
               "version": "[9.0.2, )"
             },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.3, )"
+            },
+            "SocketIO.Serializer.NewtonsoftJson": {
+              "target": "Package",
+              "version": "[3.1.2, )"
+            },
+            "SocketIO.Serializer.SystemTextJson": {
+              "target": "Package",
+              "version": "[3.1.2, )"
+            },
             "SocketIOClient": {
               "target": "Package",
               "version": "[3.1.2, )"
@@ -109,12 +121,23 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.NETCore.App.Host.linux-arm64",
+              "version": "[8.0.13, 8.0.13]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
           "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.406/PortableRuntimeIdentifierGraph.json"
+        }
+      },
+      "runtimes": {
+        "linux-arm64": {
+          "#import": []
         }
       }
     }

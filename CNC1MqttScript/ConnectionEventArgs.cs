@@ -35,7 +35,9 @@ namespace CNC1MqttScript
             {
                 try
                 {
+                    // Retrieve the topic (or assign a default if null)
                     string topic = e.ApplicationMessage.Topic ?? "Unknown Topic";
+                    // Extract the payload using the PayloadSegment API
                     string payload = Encoding.UTF8.GetString(e.ApplicationMessage.PayloadSegment.ToArray());
 
                     if (string.IsNullOrWhiteSpace(payload))
@@ -45,9 +47,6 @@ namespace CNC1MqttScript
                     }
 
                     _logger.LogDebug($"📩 Received on '{topic}': {payload}");
-
-                    // Example JSON parsing (if needed)
-                    // var jsonDoc = JsonDocument.Parse(payload);
                 }
                 catch (Exception ex)
                 {
