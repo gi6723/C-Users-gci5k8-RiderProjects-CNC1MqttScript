@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CNC1MqttScript")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fe85b4e706d1f7ebf733ccfda42248ed2aa2ea04")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7e2e1ccaa87b759d8a2742e353b87f0fb896f13a")]
 [assembly: System.Reflection.AssemblyProductAttribute("CNC1MqttScript")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CNC1MqttScript")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
