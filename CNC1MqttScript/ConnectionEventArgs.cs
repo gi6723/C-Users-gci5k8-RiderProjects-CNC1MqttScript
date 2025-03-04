@@ -38,8 +38,8 @@ namespace CNC1MqttScript
                     // Retrieve the topic (or assign a default if null)
                     string topic = e.ApplicationMessage.Topic ?? "Unknown Topic";
                     // Extract the payload using the PayloadSegment API
-                    string payload = Encoding.UTF8.GetString(e.ApplicationMessage.PayloadSegment.ToArray());
-
+                    string payload = Encoding.UTF8.GetString(e.ApplicationMessage.PayloadSegment.ToArray()).Trim();
+                
                     if (string.IsNullOrWhiteSpace(payload))
                     {
                         _logger.LogWarning($"⚠️ Empty message received on topic: {topic}");

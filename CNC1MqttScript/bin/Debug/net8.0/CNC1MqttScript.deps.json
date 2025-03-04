@@ -18,6 +18,9 @@
           "Microsoft.Extensions.Configuration.Json": "9.0.2",
           "Microsoft.Extensions.Logging": "9.0.2",
           "Microsoft.Extensions.Logging.Console": "9.0.2",
+          "Newtonsoft.Json": "13.0.3",
+          "SocketIO.Serializer.NewtonsoftJson": "3.1.2",
+          "SocketIO.Serializer.SystemTextJson": "3.1.2",
           "SocketIOClient": "3.1.2",
           "System.IdentityModel.Tokens.Jwt": "8.5.0"
         },
@@ -368,6 +371,19 @@
           }
         }
       },
+      "SocketIO.Serializer.NewtonsoftJson/3.1.2": {
+        "dependencies": {
+          "Newtonsoft.Json": "13.0.3",
+          "SocketIO.Core": "3.1.2",
+          "SocketIO.Serializer.Core": "3.1.2"
+        },
+        "runtime": {
+          "lib/netstandard2.0/SocketIO.Serializer.NewtonsoftJson.dll": {
+            "assemblyVersion": "3.1.2.0",
+            "fileVersion": "3.1.2.0"
+          }
+        }
+      },
       "SocketIO.Serializer.SystemTextJson/3.1.2": {
         "dependencies": {
           "SocketIO.Core": "3.1.2",
@@ -666,6 +682,13 @@
       "sha512": "sha512-/cJtU3JVzjqP/Jh3BpMMR0aNzYua6s9e3+hjZ6OnYprFHrGYyg/n9OcST1dBjmOvvgyJ3GwJlyq0NjnPETAHsA==",
       "path": "socketio.serializer.core/3.1.2",
       "hashPath": "socketio.serializer.core.3.1.2.nupkg.sha512"
+    },
+    "SocketIO.Serializer.NewtonsoftJson/3.1.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-vTCbbPo3UOC3KOma1VqNkZg33A/Y14ZHWT0y3JP65BWTmJN9B2NdeA1mkPkncponq6UkdszMobJ5WXHIOkvqtg==",
+      "path": "socketio.serializer.newtonsoftjson/3.1.2",
+      "hashPath": "socketio.serializer.newtonsoftjson.3.1.2.nupkg.sha512"
     },
     "SocketIO.Serializer.SystemTextJson/3.1.2": {
       "type": "package",

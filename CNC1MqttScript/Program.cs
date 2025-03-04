@@ -95,13 +95,16 @@ namespace CNC1MqttScript
             mqttClient.ApplicationMessageReceivedAsync += async e =>
             {
                 if (_authenticationCompleted) return;
-
+                
+                
                 string topic = e.ApplicationMessage.Topic;
                 string payload = Encoding.UTF8.GetString(e.ApplicationMessage.PayloadSegment.ToArray()).Trim();
+                Dictionary<string, object> jsonPayload = null;
 
+                jsonPayload = JsonSerializer.Deserialize<Dictionary<string, object>>(payload);
                 programLogger.LogInformation(
                     $"📩 Received message on topic '{topic}': {payload}"); // <-- Add this to log incoming messages
-
+                
                 if (string.IsNullOrWhiteSpace(payload))
                 {
                     programLogger.LogWarning($"⚠️ Received empty payload for topic: {topic}");
@@ -111,28 +114,51 @@ namespace CNC1MqttScript
                 switch (topic)
                 {
                     case "CNCS/CNC1/Server/Host":
-                        cncAuthService.Host = payload;
-                        programLogger.LogInformation($"✅ Set CNC Host: {cncAuthService.Host}");
+                        if (jsonPayload.TryGetValue("URL", out object hostValue))
+                        {
+                            cncAuthService.Host = hostValue.ToString();
+                            programLogger.LogInformation($"✅ Set CNC Host: {cncAuthService.Host}");
+                        }
                         break;
+
                     case "CNCS/CNC1/Server/Username":
-                        cncAuthService.Username = payload;
-                        programLogger.LogInformation($"✅ Set CNC Username: {cncAuthService.Username}");
+                        if (jsonPayload.TryGetValue("USRNM", out object userValue))
+                        {
+                            cncAuthService.Username = userValue.ToString();
+                            programLogger.LogInformation($"✅ Set CNC Username: {cncAuthService.Username}");
+                        }
                         break;
+
                     case "CNCS/CNC1/Server/Password":
-                        cncAuthService.Password = payload;
-                        programLogger.LogInformation($"✅ Set CNC Password: {cncAuthService.Password}");
+                        if (jsonPayload.TryGetValue("PSSWD", out object passValue))
+                        {
+                            cncAuthService.Password = passValue.ToString();
+                            programLogger.LogInformation($"✅ Set CNC Password: {cncAuthService.Password}");
+                        }
                         break;
+
                     case "CNCS/CNC1/Server/ControllerType":
-                        cncAuthService.ControllerType = payload;
-                        programLogger.LogInformation($"✅ Set CNC ControllerType: {cncAuthService.ControllerType}");
+                        if (jsonPayload.TryGetValue("CNTRL", out object controllerValue))
+                        {
+                            cncAuthService.ControllerType = controllerValue.ToString();
+                            programLogger.LogInformation($"✅ Set CNC ControllerType: {cncAuthService.ControllerType}");
+                        }
                         break;
+
                     case "CNCS/CNC1/Server/BuadRate":
-                        cncAuthService.BuadRate = Convert.ToInt64(payload);
-                        programLogger.LogInformation($"✅ Set CNC BuadRate: {cncAuthService.BuadRate}");
+                        if (jsonPayload.TryGetValue("BUADRATE", out object baudValue) && long.TryParse(baudValue.ToString(), out long baudRate))
+                        {
+                            cncAuthService.BuadRate = baudRate;
+                            programLogger.LogInformation($"✅ Set CNC BuadRate: {cncAuthService.BuadRate}");
+                        }
                         break;
+
                     case "CNCS/CNC1/Server/Port":
-                        cncAuthService.Port = payload;
-                        programLogger.LogInformation($"✅ Set CNC Port: {cncAuthService.Port}");
+                        if (jsonPayload.TryGetValue("PORT", out object portValue))
+                        {
+                            cncAuthService.Port = portValue.ToString();
+                            programLogger.LogInformation($"✅ Set CNC Port: {cncAuthService.Port}");
+                        }
                         break;
                 }
 

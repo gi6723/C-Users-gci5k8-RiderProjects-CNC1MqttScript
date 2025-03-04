@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Text.Json;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using MQTTnet;
@@ -24,16 +26,36 @@ namespace CNC1MqttScript
             _socket = socket;
         }
 
+        // Use a bounded channel with a capacity limit (e.g. 1000) to apply backpressure.
+        private readonly Channel<(string, SocketIOResponse)> _eventQueue = Channel.CreateBounded<(string, SocketIOResponse)>(
+            new BoundedChannelOptions(1000)
+            {
+                FullMode = BoundedChannelFullMode.DropWrite // Drop events if full; alternatively, use Wait to backpressure.
+            });
+
+        // Dictionary to track the last time each topic was published.
+        private readonly Dictionary<string, DateTime> _lastPublishedTime = new();
+        private readonly TimeSpan _publishInterval = TimeSpan.FromMilliseconds(500); // Publish at most once every 500ms per topic
+
         public void Start()
         {
+            _ = ProcessEventQueue(); // Start processing events in the background
+
             _socket.OnAny((string eventName, SocketIOResponse response) =>
             {
-                _logger.LogInformation($"[DEBUG OnAny] Event: {eventName}, Data: {response}");
-                // Process each event asynchronously.
-                Task.Run(() => HandleGenericEvent(eventName, response));
+                // Add the event to the channel. If the channel is full, the event is dropped.
+                _eventQueue.Writer.TryWrite((eventName, response));
             });
 
             _logger.LogInformation("📡 Universal CNC event listener is active.");
+        }
+
+        private async Task ProcessEventQueue()
+        {
+            await foreach (var (eventName, response) in _eventQueue.Reader.ReadAllAsync())
+            {
+                await HandleGenericEvent(eventName, response);
+            }
         }
 
         private async Task HandleGenericEvent(string eventName, SocketIOResponse response)
@@ -71,8 +93,8 @@ namespace CNC1MqttScript
                 var message = new MqttApplicationMessageBuilder()
                     .WithTopic(topic)
                     .WithPayload(rawJson)
-                    .WithQualityOfServiceLevel(MQTTnet.Protocol.MqttQualityOfServiceLevel.ExactlyOnce)
-                    .WithRetainFlag()
+                    .WithQualityOfServiceLevel(MQTTnet.Protocol.MqttQualityOfServiceLevel.AtMostOnce)
+                    .WithRetainFlag(false)
                     .Build();
 
                 await _mqttClient.EnqueueAsync(message);
@@ -85,7 +107,7 @@ namespace CNC1MqttScript
         }
 
         // --------------------------------------
-        // Workflow State (unchanged)
+        // Workflow State
         // --------------------------------------
         private async Task HandleWorkflowState(SocketIOResponse response, string eventName)
         {
@@ -96,13 +118,13 @@ namespace CNC1MqttScript
 
                 _logger.LogInformation($"🔍 Parsing workflow state: {json}");
 
-                // 1️⃣ If the JSON itself is a string, use it directly.
+                // If the JSON itself is a string, use it directly.
                 if (json.ValueKind == JsonValueKind.String)
                 {
                     state = json.GetString() ?? "unknown";
                     _logger.LogInformation($"✅ Found workflow state as string: {state}");
                 }
-                // 2️⃣ If JSON is an array, extract the first element if it is a string.
+                // If JSON is an array, extract the first element if it is a string.
                 else if (json.ValueKind == JsonValueKind.Array && json.GetArrayLength() > 0)
                 {
                     JsonElement firstElement = json[0];
@@ -112,7 +134,7 @@ namespace CNC1MqttScript
                         _logger.LogInformation($"✅ Found workflow state in array: {state}");
                     }
                 }
-                // 3️⃣ If JSON is an object, try dictionary deserialization.
+                // If JSON is an object, try dictionary deserialization.
                 else if (json.ValueKind == JsonValueKind.Object)
                 {
                     var dict = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(json.GetRawText());
@@ -123,7 +145,7 @@ namespace CNC1MqttScript
                     }
                 }
 
-                // 4️⃣ Fallback: Use recursive search if still unknown.
+                // Fallback: Use recursive search if still unknown.
                 if (state == "unknown" && RecursiveSearch(json, "workflow:state", out JsonElement foundState))
                 {
                     state = foundState.GetString() ?? "unknown";
@@ -148,7 +170,7 @@ namespace CNC1MqttScript
         }
 
         // --------------------------------------
-        // Sender Status (unchanged except for "long" -> "double" if needed)
+        // Sender Status
         // --------------------------------------
         private async Task HandleSenderStatus(SocketIOResponse response, string eventName)
         {
@@ -157,15 +179,9 @@ namespace CNC1MqttScript
                 var json = response.GetValue<JsonElement>();
 
                 string gcodeFileName = "";
-                double total = 0, sent = 0, received = 0; 
-                // Changed these to double, in case the CNC sends "650.0" or similar
+                float total = 0, sent = 0, received = 0;
                 string elapsedTime = "", remainingTime = "";
 
-                // (The rest of your existing logic is fine; 
-                // just replaced "long" with "double" 
-                // and used double.TryParse(...) in your parse code.)
-
-                // 1️⃣ If JSON is an object, try dictionary extraction.
                 if (json.ValueKind == JsonValueKind.Object)
                 {
                     var dict = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(json.GetRawText());
@@ -175,15 +191,14 @@ namespace CNC1MqttScript
                             gcodeFileName = nameEl.GetString() ?? "";
 
                         if (dict.TryGetValue("total", out JsonElement totalEl))
-                            total = ConvertToDouble(totalEl);
+                            total = ConvertToFloat(totalEl);
 
                         if (dict.TryGetValue("sent", out JsonElement sentEl))
-                            sent = ConvertToDouble(sentEl);
+                            sent = ConvertToFloat(sentEl);
 
                         if (dict.TryGetValue("received", out JsonElement receivedEl))
-                            received = ConvertToDouble(receivedEl);
+                            received = ConvertToFloat(receivedEl);
 
-                        // For time fields, allow numeric values.
                         if (dict.TryGetValue("elapsedTime", out JsonElement elapsedEl))
                             elapsedTime = ConvertToString(elapsedEl);
 
@@ -191,7 +206,6 @@ namespace CNC1MqttScript
                             remainingTime = ConvertToString(remainingEl);
                     }
                 }
-                // 2️⃣ If JSON is an array, iterate through items.
                 else if (json.ValueKind == JsonValueKind.Array)
                 {
                     foreach (var item in json.EnumerateArray())
@@ -207,13 +221,13 @@ namespace CNC1MqttScript
                                     gcodeFileName = nameEl.GetString() ?? "";
 
                                 if (Math.Abs(total) < 0.00001 && dict.TryGetValue("total", out JsonElement totalEl))
-                                    total = ConvertToDouble(totalEl);
+                                    total = ConvertToFloat(totalEl);
 
                                 if (Math.Abs(sent) < 0.00001 && dict.TryGetValue("sent", out JsonElement sentEl))
-                                    sent = ConvertToDouble(sentEl);
+                                    sent = ConvertToFloat(sentEl);
 
                                 if (Math.Abs(received) < 0.00001 && dict.TryGetValue("received", out JsonElement receivedEl))
-                                    received = ConvertToDouble(receivedEl);
+                                    received = ConvertToFloat(receivedEl);
 
                                 if (string.IsNullOrEmpty(elapsedTime) && 
                                     dict.TryGetValue("elapsedTime", out JsonElement elapsedEl))
@@ -227,22 +241,17 @@ namespace CNC1MqttScript
                     }
                 }
 
-                // 3️⃣ Fallback: Use recursive search if any field is still missing.
+                // Fallback: Recursive search for missing fields.
                 if (string.IsNullOrEmpty(gcodeFileName) && RecursiveSearch(json, "name", out JsonElement foundName))
                     gcodeFileName = foundName.GetString() ?? "";
-
                 if (Math.Abs(total) < 0.00001 && RecursiveSearch(json, "total", out JsonElement foundTotal))
-                    total = ConvertToDouble(foundTotal);
-
+                    total = ConvertToFloat(foundTotal);
                 if (Math.Abs(sent) < 0.00001 && RecursiveSearch(json, "sent", out JsonElement foundSent))
-                    sent = ConvertToDouble(foundSent);
-
+                    sent = ConvertToFloat(foundSent);
                 if (Math.Abs(received) < 0.00001 && RecursiveSearch(json, "received", out JsonElement foundReceived))
-                    received = ConvertToDouble(foundReceived);
-
+                    received = ConvertToFloat(foundReceived);
                 if (string.IsNullOrEmpty(elapsedTime) && RecursiveSearch(json, "elapsedTime", out JsonElement foundElapsed))
                     elapsedTime = ConvertToString(foundElapsed);
-
                 if (string.IsNullOrEmpty(remainingTime) && RecursiveSearch(json, "remainingTime", out JsonElement foundRemaining))
                     remainingTime = ConvertToString(foundRemaining);
 
@@ -261,21 +270,20 @@ namespace CNC1MqttScript
         }
 
         // --------------------------------------
-        // Controller State Handler w/ Debug Logs
+        // Controller State
         // --------------------------------------
         private async Task HandleControllerState(SocketIOResponse response, string eventName)
         {
             try
             {
-                // 1) First argument is a string, e.g. "Grbl"
-                string firstArg = response.GetValue<string>(0);   
-                // 2) Second argument is the object with "status" and "parserstate"
+                // First argument is a string, e.g. "Grbl"
+                string firstArg = response.GetValue<string>(0);
+                // Second argument is the object with "status" and "parserstate"
                 JsonElement secondArg = response.GetValue<JsonElement>(1);
 
                 _logger.LogInformation($"[ControllerState] firstArg = {firstArg}");
                 _logger.LogInformation($"[ControllerState] secondArg = {secondArg}");
 
-                // Now parse the secondArg for 'status' / 'feedrate' / etc.
                 double feedrate = 0;
                 double spindleSpeed = 0;
                 string activeState = "unknown";
@@ -284,23 +292,39 @@ namespace CNC1MqttScript
                     secondArg.TryGetProperty("status", out JsonElement status) &&
                     status.ValueKind == JsonValueKind.Object)
                 {
-                    // activeState
                     if (status.TryGetProperty("activeState", out JsonElement activeStateEl) &&
                         activeStateEl.ValueKind == JsonValueKind.String)
                     {
                         activeState = activeStateEl.GetString() ?? "unknown";
                     }
 
-                    // feedrate
                     if (status.TryGetProperty("feedrate", out JsonElement feedEl))
                     {
-                        feedrate = ConvertToDouble(feedEl);
+                        feedrate = ConvertToFloat(feedEl);
                     }
 
-                    // spindle
                     if (status.TryGetProperty("spindle", out JsonElement spindleEl))
                     {
-                        spindleSpeed = ConvertToDouble(spindleEl);
+                        spindleSpeed = ConvertToFloat(spindleEl);
+                    }
+
+                    // Extract Wpos from within "status"
+                    string wposFormatted = "";
+                    if (status.TryGetProperty("wpos", out JsonElement wposElement) &&
+                        wposElement.ValueKind == JsonValueKind.Object)
+                    {
+                        string x = wposElement.TryGetProperty("x", out JsonElement xEl) ? xEl.GetString() ?? "" : "";
+                        string y = wposElement.TryGetProperty("y", out JsonElement yEl) ? yEl.GetString() ?? "" : "";
+                        string z = wposElement.TryGetProperty("z", out JsonElement zEl) ? zEl.GetString() ?? "" : "";
+                        if (!string.IsNullOrEmpty(x) && !string.IsNullOrEmpty(y) && !string.IsNullOrEmpty(z))
+                        {
+                            wposFormatted = $"{x}~{y}~{z}";
+                        }
+                    }
+
+                    if (!string.IsNullOrEmpty(wposFormatted))
+                    {
+                        await PublishGuiData("Wpos", wposFormatted);
                     }
                 }
                 else
@@ -308,13 +332,11 @@ namespace CNC1MqttScript
                     _logger.LogInformation("Could not find 'status' property in secondArg.");
                 }
 
-                // If needed, do fallback recursive search
+                // Fallback recursive searches for missing fields.
                 if (Math.Abs(feedrate) < 0.00001 && RecursiveSearch(secondArg, "feedrate", out JsonElement foundFeedrate))
-                    feedrate = ConvertToDouble(foundFeedrate);
-
+                    feedrate = ConvertToFloat(foundFeedrate);
                 if (Math.Abs(spindleSpeed) < 0.00001 && RecursiveSearch(secondArg, "spindle", out JsonElement foundSpindle))
-                    spindleSpeed = ConvertToDouble(foundSpindle);
-
+                    spindleSpeed = ConvertToFloat(foundSpindle);
                 if (activeState == "unknown" &&
                     RecursiveSearch(secondArg, "activeState", out JsonElement foundActiveState) &&
                     foundActiveState.ValueKind == JsonValueKind.String)
@@ -334,39 +356,29 @@ namespace CNC1MqttScript
             }
         }
 
-
-
-        // --------------------------------------
-        // Helper: Convert a JsonElement to double
-        // --------------------------------------
-        private double ConvertToDouble(JsonElement element)
+        private float ConvertToFloat(JsonElement element)
         {
             try
             {
                 switch (element.ValueKind)
                 {
                     case JsonValueKind.Number:
-                        // If the number is something like 650.0, we can parse it as double
-                        if (element.TryGetDouble(out double dblVal))
-                            return dblVal;
+                        if (element.TryGetSingle(out float floatVal))
+                            return floatVal;
                         break;
                     case JsonValueKind.String:
-                        // Attempt to parse as double from the string
-                        if (double.TryParse(element.GetString(), out double dblParse))
-                            return dblParse;
+                        if (float.TryParse(element.GetString(), out float parsedFloat))
+                            return parsedFloat;
                         break;
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogWarning($"[ConvertToDouble] Could not parse element '{element}' => {ex.Message}");
+                _logger.LogWarning($"[ConvertToFloat] Could not parse '{element}': {ex.Message}");
             }
-            return 0; // default if parse fails
+            return 0f; // Default to 0 if parsing fails
         }
 
-        // --------------------------------------
-        // Helper: Convert a JsonElement to string
-        // --------------------------------------
         private string ConvertToString(JsonElement element)
         {
             switch (element.ValueKind)
@@ -374,16 +386,13 @@ namespace CNC1MqttScript
                 case JsonValueKind.String:
                     return element.GetString() ?? "";
                 case JsonValueKind.Number:
-                    // e.g., "650.0" or "11000.0"
-                    return element.GetRawText(); 
+                    return element.GetRawText();
                 default:
                     return "";
             }
         }
 
-        // --------------------------------------
-        // Recursive search function
-        // --------------------------------------
+        // Recursive search for keys in the JSON structure.
         private static bool RecursiveSearch(JsonElement element, string key, out JsonElement foundElement)
         {
             if (element.ValueKind == JsonValueKind.Object)
@@ -409,23 +418,39 @@ namespace CNC1MqttScript
             return false;
         }
 
-        // --------------------------------------
-        // PublishGuiData
-        // --------------------------------------
+        // Throttled publication of GUI data per topic.
         private async Task PublishGuiData(string eventName, object data)
         {
             try
             {
+                // Ensure we only publish once every _publishInterval per topic.
+                if (_lastPublishedTime.TryGetValue(eventName, out DateTime lastTime) &&
+                    DateTime.UtcNow - lastTime < _publishInterval)
+                {
+                    return; // Skip if the last message was sent recently
+                }
+
+                // Update last sent timestamp.
+                _lastPublishedTime[eventName] = DateTime.UtcNow;
+
+                var payloadObj = new
+                {
+                    eventtime = DateTime.UtcNow.Subtract(DateTime.UnixEpoch).TotalSeconds,
+                    value = data
+                };
+
                 string topic = $"CNCS/CNC1/Data/GUI/{eventName}";
-                string payload = JsonSerializer.Serialize(data);
+                string payload = JsonSerializer.Serialize(payloadObj);
+
                 var message = new MqttApplicationMessageBuilder()
                     .WithTopic(topic)
                     .WithPayload(payload)
-                    .WithQualityOfServiceLevel(MQTTnet.Protocol.MqttQualityOfServiceLevel.ExactlyOnce)
-                    .WithRetainFlag()
+                    .WithQualityOfServiceLevel(MQTTnet.Protocol.MqttQualityOfServiceLevel.AtMostOnce)
+                    .WithRetainFlag(false)
                     .Build();
+
                 await _mqttClient.EnqueueAsync(message);
-                _logger.LogInformation($"📤 [GUI] Published updated GUI data to {data}");
+                _logger.LogInformation($"📤 [GUI] Published {payload} to {topic}");
             }
             catch (Exception ex)
             {

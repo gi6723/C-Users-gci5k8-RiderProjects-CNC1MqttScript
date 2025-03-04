@@ -53,3 +53,4 @@ C:\Users\gci5k8\RiderProjects\CNC1MqttScript\CNC1MqttScript\obj\Debug\net8.0\ref
 C:\Users\gci5k8\RiderProjects\CNC1MqttScript\CNC1MqttScript\obj\Debug\net8.0\CNC1MqttScript.pdb
 C:\Users\gci5k8\RiderProjects\CNC1MqttScript\CNC1MqttScript\obj\Debug\net8.0\CNC1MqttScript.genruntimeconfig.cache
 C:\Users\gci5k8\RiderProjects\CNC1MqttScript\CNC1MqttScript\obj\Debug\net8.0\ref\CNC1MqttScript.dll
+C:\Users\gci5k8\RiderProjects\CNC1MqttScript\CNC1MqttScript\bin\Debug\net8.0\SocketIO.Serializer.NewtonsoftJson.dll

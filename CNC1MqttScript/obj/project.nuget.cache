@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "EzSSyBnDV4M=",
+  "dgSpecHash": "HFQlqxiXjhI=",
   "success": true,
   "projectFilePath": "C:\\Users\\gci5k8\\RiderProjects\\CNC1MqttScript\\CNC1MqttScript\\CNC1MqttScript.csproj",
   "expectedPackageFiles": [
@@ -29,6 +29,7 @@
     "C:\\Users\\gci5k8\\.nuget\\packages\\microsoft.identitymodel.jsonwebtokens\\8.5.0\\microsoft.identitymodel.jsonwebtokens.8.5.0.nupkg.sha512",
     "C:\\Users\\gci5k8\\.nuget\\packages\\microsoft.identitymodel.logging\\8.5.0\\microsoft.identitymodel.logging.8.5.0.nupkg.sha512",
     "C:\\Users\\gci5k8\\.nuget\\packages\\microsoft.identitymodel.tokens\\8.5.0\\microsoft.identitymodel.tokens.8.5.0.nupkg.sha512",
+    "C:\\Users\\gci5k8\\.nuget\\packages\\microsoft.net.illink.tasks\\8.0.13\\microsoft.net.illink.tasks.8.0.13.nupkg.sha512",
     "C:\\Users\\gci5k8\\.nuget\\packages\\mqttnet\\4.3.7.1207\\mqttnet.4.3.7.1207.nupkg.sha512",
     "C:\\Users\\gci5k8\\.nuget\\packages\\mqttnet.extensions.managedclient\\4.3.7.1207\\mqttnet.extensions.managedclient.4.3.7.1207.nupkg.sha512",
     "C:\\Users\\gci5k8\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512",
@@ -42,6 +43,8 @@
     "C:\\Users\\gci5k8\\.nuget\\packages\\system.io.pipelines\\9.0.2\\system.io.pipelines.9.0.2.nupkg.sha512",
     "C:\\Users\\gci5k8\\.nuget\\packages\\system.text.encodings.web\\9.0.2\\system.text.encodings.web.9.0.2.nupkg.sha512",
     "C:\\Users\\gci5k8\\.nuget\\packages\\system.text.json\\9.0.2\\system.text.json.9.0.2.nupkg.sha512",
+    "C:\\Users\\gci5k8\\.nuget\\packages\\microsoft.netcore.app.runtime.linux-arm64\\8.0.13\\microsoft.netcore.app.runtime.linux-arm64.8.0.13.nupkg.sha512",
+    "C:\\Users\\gci5k8\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.linux-arm64\\8.0.13\\microsoft.aspnetcore.app.runtime.linux-arm64.8.0.13.nupkg.sha512",
     "C:\\Users\\gci5k8\\.nuget\\packages\\microsoft.netcore.app.host.linux-arm64\\8.0.13\\microsoft.netcore.app.host.linux-arm64.8.0.13.nupkg.sha512"
   ],
   "logs": []

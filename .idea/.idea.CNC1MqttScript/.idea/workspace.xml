@@ -10,20 +10,40 @@
     <list default="true" id="53b22eb9-4c8c-426b-ae5a-cbe8add063cd" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.CNC1MqttScript/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.CNC1MqttScript/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CNC1MqttScript/CNCLiveDataPublisher.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/CNCLiveDataPublisher.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CNC1MqttScript/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CNC1MqttScript/bin/Debug/net8.0/CNC1MqttScript.deps.json" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/bin/Debug/net8.0/CNC1MqttScript.deps.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CNC1MqttScript/bin/Debug/net8.0/CNC1MqttScript.dll" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/bin/Debug/net8.0/CNC1MqttScript.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CNC1MqttScript/bin/Debug/net8.0/CNC1MqttScript.exe" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/bin/Debug/net8.0/CNC1MqttScript.exe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CNC1MqttScript/bin/Debug/net8.0/CNC1MqttScript.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/bin/Debug/net8.0/CNC1MqttScript.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CNC1MqttScript/bin/Release/net8.0/CNC1MqttScript.dll" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/bin/Release/net8.0/CNC1MqttScript.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CNC1MqttScript/bin/Release/net8.0/CNC1MqttScript.exe" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/bin/Release/net8.0/CNC1MqttScript.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CNC1MqttScript/bin/Release/net8.0/CNC1MqttScript.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/bin/Release/net8.0/CNC1MqttScript.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CNC1MqttScript/obj/CNC1MqttScript.csproj.nuget.dgspec.json" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/obj/CNC1MqttScript.csproj.nuget.dgspec.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CNC1MqttScript/obj/CNC1MqttScript.csproj.nuget.g.props" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/obj/CNC1MqttScript.csproj.nuget.g.props" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CNC1MqttScript/obj/Debug/net8.0/CNC1MqttScript.AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/obj/Debug/net8.0/CNC1MqttScript.AssemblyInfo.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CNC1MqttScript/obj/Debug/net8.0/CNC1MqttScript.AssemblyInfoInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/obj/Debug/net8.0/CNC1MqttScript.AssemblyInfoInputs.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CNC1MqttScript/obj/Debug/net8.0/CNC1MqttScript.assets.cache" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/obj/Debug/net8.0/CNC1MqttScript.assets.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CNC1MqttScript/obj/Debug/net8.0/CNC1MqttScript.csproj.AssemblyReference.cache" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/obj/Debug/net8.0/CNC1MqttScript.csproj.AssemblyReference.cache" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CNC1MqttScript/obj/Debug/net8.0/CNC1MqttScript.csproj.CoreCompileInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/obj/Debug/net8.0/CNC1MqttScript.csproj.CoreCompileInputs.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CNC1MqttScript/obj/Debug/net8.0/CNC1MqttScript.csproj.FileListAbsolute.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/obj/Debug/net8.0/CNC1MqttScript.csproj.FileListAbsolute.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CNC1MqttScript/obj/Debug/net8.0/CNC1MqttScript.dll" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/obj/Debug/net8.0/CNC1MqttScript.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CNC1MqttScript/obj/Debug/net8.0/CNC1MqttScript.genruntimeconfig.cache" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/obj/Debug/net8.0/CNC1MqttScript.genruntimeconfig.cache" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CNC1MqttScript/obj/Debug/net8.0/CNC1MqttScript.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/obj/Debug/net8.0/CNC1MqttScript.pdb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CNC1MqttScript/obj/Debug/net8.0/CNC1MqttScript.sourcelink.json" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/obj/Debug/net8.0/CNC1MqttScript.sourcelink.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CNC1MqttScript/obj/Debug/net8.0/apphost.exe" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/obj/Debug/net8.0/apphost.exe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CNC1MqttScript/obj/Debug/net8.0/ref/CNC1MqttScript.dll" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/obj/Debug/net8.0/ref/CNC1MqttScript.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CNC1MqttScript/obj/Debug/net8.0/refint/CNC1MqttScript.dll" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/obj/Debug/net8.0/refint/CNC1MqttScript.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CNC1MqttScript/obj/Release/net8.0/CNC1MqttScript.AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/obj/Release/net8.0/CNC1MqttScript.AssemblyInfo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CNC1MqttScript/obj/Release/net8.0/CNC1MqttScript.AssemblyInfoInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/obj/Release/net8.0/CNC1MqttScript.AssemblyInfoInputs.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CNC1MqttScript/obj/Release/net8.0/CNC1MqttScript.assets.cache" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/obj/Release/net8.0/CNC1MqttScript.assets.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CNC1MqttScript/obj/Release/net8.0/CNC1MqttScript.csproj.AssemblyReference.cache" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/obj/Release/net8.0/CNC1MqttScript.csproj.AssemblyReference.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CNC1MqttScript/obj/Release/net8.0/CNC1MqttScript.dll" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/obj/Release/net8.0/CNC1MqttScript.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CNC1MqttScript/obj/Release/net8.0/CNC1MqttScript.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/obj/Release/net8.0/CNC1MqttScript.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CNC1MqttScript/obj/Release/net8.0/CNC1MqttScript.sourcelink.json" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/obj/Release/net8.0/CNC1MqttScript.sourcelink.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CNC1MqttScript/obj/Release/net8.0/apphost.exe" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/obj/Release/net8.0/apphost.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CNC1MqttScript/obj/Release/net8.0/ref/CNC1MqttScript.dll" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/obj/Release/net8.0/ref/CNC1MqttScript.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CNC1MqttScript/obj/Release/net8.0/refint/CNC1MqttScript.dll" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/obj/Release/net8.0/refint/CNC1MqttScript.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CNC1MqttScript/obj/project.assets.json" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/obj/project.assets.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CNC1MqttScript/obj/project.nuget.cache" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/obj/project.nuget.cache" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CNC1MqttScript/obj/rider.project.model.nuget.info" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/obj/rider.project.model.nuget.info" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CNC1MqttScript/obj/rider.project.restore.info" beforeDir="false" afterPath="$PROJECT_DIR$/CNC1MqttScript/obj/rider.project.restore.info" afterDir="false" />
     </list>
@@ -52,21 +72,21 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    ".NET Project.CNC1MqttScript.executor": "Debug",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "<unknown>",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "SolutionBuilderGeneralOptionsPage",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;.NET Project.CNC1MqttScript.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;SolutionBuilderGeneralOptionsPage&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="CNC1MqttScript" type="DotNetProject" factoryName=".NET Project">
       <option name="EXE_PATH" value="" />
@@ -100,7 +120,9 @@
       <workItem from="1740187909112" duration="730000" />
       <workItem from="1740189612514" duration="1734000" />
       <workItem from="1740191715506" duration="506000" />
-      <workItem from="1740192255754" duration="40557000" />
+      <workItem from="1740192255754" duration="47883000" />
+      <workItem from="1740563676905" duration="4626000" />
+      <workItem from="1740570880057" duration="10790000" />
     </task>
     <servers />
   </component>

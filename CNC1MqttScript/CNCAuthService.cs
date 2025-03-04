@@ -14,16 +14,12 @@ namespace CNC1MqttScript
         private readonly ILogger<CNCAuthService> _logger;
         private readonly IManagedMqttClient _mqttClient;
 
-        // Values set from configuration or MQTT messages
         public required string Host { get; set; }
         public required string Username { get; set; }
         public required string Password { get; set; }
         public required string Token { get; set; }
-        
         public required string ControllerType { get; set; }
-
         public required long? BuadRate { get; set; } = null;
-        
         public required string Port { get; set; }
 
         public CNCAuthService(string host, string username, string password, string token, int buadrate, string port, string controllertype)
@@ -35,18 +31,14 @@ namespace CNC1MqttScript
             ControllerType = controllertype;
             BuadRate = buadrate;
             Port = port;
-            
         }
 
-        public CNCAuthService( ILogger<CNCAuthService> logger, IManagedMqttClient mqttClient)
+        public CNCAuthService(ILogger<CNCAuthService> logger, IManagedMqttClient mqttClient)
         {
             _logger = logger;
             _mqttClient = mqttClient;
         }
-        /// <summary>
-        /// Contacts the CNCjs server to generate and retrieve a new authentication token.
-        /// </summary>
-        /// <returns>The new token if successful, null otherwise.</returns>
+
         public async Task<string?> GetAuthTokenAsync()
         {
             if (string.IsNullOrEmpty(Host) || string.IsNullOrEmpty(Username) || string.IsNullOrEmpty(Password))
@@ -57,7 +49,6 @@ namespace CNC1MqttScript
 
             using var client = new HttpClient();
             var signinUrl = $"{Host}/api/signin";
-
             var credentials = new { name = Username, password = Password };
             var payload = JsonSerializer.Serialize(credentials);
             var content = new StringContent(payload, Encoding.UTF8, "application/json");
@@ -91,26 +82,23 @@ namespace CNC1MqttScript
             return null;
         }
 
-        /// <summary>
-        /// Subscribes to the MQTT topic that provides the authentication token.
-        /// If a token is published to that topic, we store it locally.
-        /// </summary>
         public async Task SubscribeToMqttTokenAsync()
         {
             _mqttClient.ApplicationMessageReceivedAsync += async e =>
             {
                 if (e.ApplicationMessage.Topic.Equals("CNCS/CNC1/Server/MqttToken", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    var receivedToken = Encoding.UTF8.GetString(e.ApplicationMessage.PayloadSegment.ToArray());
+                    var receivedTokenJson = Encoding.UTF8.GetString(e.ApplicationMessage.PayloadSegment.ToArray());
+                    var tokenObject = JsonSerializer.Deserialize<JsonElement>(receivedTokenJson);
                     
-                    if (!string.IsNullOrWhiteSpace(receivedToken))
+                    if (tokenObject.TryGetProperty("TOKN", out var tokenElement))
                     {
-                        Token = receivedToken;
+                        Token = tokenElement.GetString() ?? string.Empty;
                         _logger.LogInformation("Updated authentication token via MQTT.");
                     }
                     else
                     {
-                        _logger.LogWarning("Received an empty token from MQTT.");
+                        _logger.LogWarning("Received an empty or malformed token from MQTT.");
                     }
                 }
                 await Task.CompletedTask;
@@ -120,10 +108,6 @@ namespace CNC1MqttScript
             _logger.LogInformation("Subscribed to MQTT token updates.");
         }
 
-        /// <summary>
-        /// Publishes a new authentication token to the MQTT broker.
-        /// </summary>
-        /// <param name="newToken">The new token to publish.</param>
         public async Task PublishTokenAsync(string newToken)
         {
             if (string.IsNullOrWhiteSpace(newToken))
@@ -132,9 +116,10 @@ namespace CNC1MqttScript
                 return;
             }
 
+            var tokenJson = JsonSerializer.Serialize(new { TOKN = newToken });
             var message = new MqttApplicationMessageBuilder()
                 .WithTopic("CNCS/CNC1/Server/MqttToken")
-                .WithPayload(newToken)
+                .WithPayload(tokenJson)
                 .WithQualityOfServiceLevel(MQTTnet.Protocol.MqttQualityOfServiceLevel.ExactlyOnce)
                 .WithRetainFlag()
                 .Build();
@@ -163,8 +148,7 @@ namespace CNC1MqttScript
                         if (portName == Port)
                         {
                             portFound = true;
-                            bool inUse = port.TryGetProperty("inuse", out JsonElement inuseElement) &&
-                                         inuseElement.GetBoolean();
+                            bool inUse = port.TryGetProperty("inuse", out JsonElement inuseElement) && inuseElement.GetBoolean();
                             
                             await client.EmitAsync("open", new object[]
                             {
@@ -191,7 +175,6 @@ namespace CNC1MqttScript
                     programLogger.LogInformation($"[DEBUG] Exception in serialport:list handler: {ex.Message}");
                 }
             });
-
         }
     }
 }
